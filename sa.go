@@ -8,30 +8,10 @@ import (
 	"strconv"
 	"rand"
 	"math"
+	.	"matrix"
 )
 
-type vector []int
-type matrix struct {
-	n int
-	v []int
-}
-
-func newMatrix(n int) (m *matrix) {
-	m = new(matrix)
-	m.n = n
-	m.v = make([]int, n*n)
-	return m
-}
-
 var verbose bool
-
-func (m matrix) get(i int, j int) int {
-	return m.v[i+j*m.n]
-}
-
-func (m matrix) set(i int, j int, v int) {
-	m.v[i+j*m.n] = v
-}
 
 func max(a int64, b int64) int64 {
 	if a > b {
@@ -83,15 +63,15 @@ func readInt(s string) (x int, i int){
 	return x, i
 }
 
-func readMatrix(rd *bufio.Reader, n int) *matrix {
-	M := newMatrix(n)
+func readMatrix(rd *bufio.Reader, n int) *Matrix {
+	M := NewMatrix(n)
 	for i := 0; i < n; i++ {
 		skip(rd)
 		line, _ := rd.ReadString('\n')
 		for j := 0; j < n; j++ {
 			line = wskip(line)
 			x, p := readInt(line)
-			M.set(j, i, x)
+			M.Set(j, i, x)
 			if p == 0 {
 				panic("bad int64eger")
 			}
@@ -101,82 +81,44 @@ func readMatrix(rd *bufio.Reader, n int) *matrix {
 	return M
 }
 
-func load(in *os.File) (int, *matrix, *matrix) {
+func load(in *os.File) (int, *Matrix, *Matrix) {
 	rd := bufio.NewReader(in)
 	skip(rd)
 	line, _ := rd.ReadString('\n')
 	line = wskip(line)
 	n, i := readInt(line)
 	if i == 0 {
-		panic("expecting matrix size")
+		panic("expecting Matrix size")
 	}
 	a := readMatrix(rd, n)
 	b := readMatrix(rd, n)
 	return n, a, b
 }
 
-func (p vector) swap(i int, j int) {
-	x := p[i]
-	p[i] = p[j]
-	p[j] = x
-}
-
-func (v vector) copy(w vector) {
-	for i := 0; i < len(v); i++ {
-		v[i] = w[i]
-	}
-}
-
-func (v vector) print() {
-	for i := 0; i < len(v); i++ {
-		fmt.Printf("%d ", v[i])
-	}
-	fmt.Print("\n")
-}
-
-func (m *matrix) print() {
-	for i := 0; i < m.n; i++ {
-		for j := 0; j < m.n; j++ {
-			fmt.Printf("%d ", m.get(i, j))
-		}
-		fmt.Print("\n")
-	}
-}
-
-func perm(p vector) {
-	n := len(p)
-	for i := 0; i < n; i++ {
-		p[i] = i
-	}
-	for i := 0; i < n; i++ {
-		p.swap(i, i+rand.Intn(n-i))
-	}
-}
-
-func cost(a *matrix, b *matrix, p vector) (c int64) {
+func cost(a *Matrix, b *Matrix, p Vector) (c int64) {
 	c = 0
 	for i := 0; i < len(p); i++ {
 		for j := 0; j < len(p); j++ {
-			c += int64(a.get(i, j)*b.get(p[i], p[j]))
+			c += int64(a.Get(i, j)*b.Get(p[i], p[j]))
 		}
 	}
 	return c
 }
 
-func delta(a *matrix, b *matrix, p vector, r int, s int) (d int64) {
-	d = int64((a.get(r,r)-a.get(s,s))*(b.get(p[s],p[s])-b.get(p[r],p[r])) +
-		(a.get(r,s)-a.get(s,r))*(b.get(p[s],p[r])-b.get(p[r],p[s])))
+func delta(a *Matrix, b *Matrix, p Vector, r int, s int) (d int64) {
+	d = int64((a.Get(r,r)-a.Get(s,s))*(b.Get(p[s],p[s])-b.Get(p[r],p[r])) +
+		(a.Get(r,s)-a.Get(s,r))*(b.Get(p[s],p[r])-b.Get(p[r],p[s])))
 	for i := 0; i < len(p); i++ {
 		if i != r && i != s {
-			d += int64((a.get(i,r)-a.get(i,s))*(b.get(p[i],p[s])-b.get(p[i],p[r])) +
-				(a.get(r,i)-a.get(s,i))*(b.get(p[s],p[i])-b.get(p[r],p[i])))
+			d += int64((a.Get(i,r)-a.Get(i,s))*(b.Get(p[i],p[s])-b.Get(p[i],p[r])) +
+				(a.Get(r,i)-a.Get(s,i))*(b.Get(p[s],p[i])-b.Get(p[r],p[i])))
 		}
 	}
 	return d
 
 }
 
-func inits(a *matrix, b *matrix, w vector, c int64) (int64, int64, int64) {
+func inits(a *Matrix, b *Matrix, w Vector, c int64) (int64, int64, int64) {
 	var (
 		dmin, dmax int64
 	)
@@ -191,15 +133,15 @@ func inits(a *matrix, b *matrix, w vector, c int64) (int64, int64, int64) {
 		c += d
 		dmin = min(dmin, d)
 		dmax = max(dmax, d)
-		w.swap(r, s)
+		w.Swap(r, s)
 	}
 	return c, dmin, dmax
 }
 
-func solve(a *matrix, b *matrix, v vector, m int) int64 {
+func solve(a *Matrix, b *Matrix, v Vector, m int) int64 {
 	n := len(v)
-	w := make(vector, n)
-	w.copy(v)
+	w := make(Vector, n)
+	w.Copy(v)
 	cc := cost(a, b, v)
 	c, dmin, dmax := inits(a, b, w, cc)
 	var t0 float64 = float64(dmin+(dmax-dmin)/10.0)
@@ -226,7 +168,7 @@ func solve(a *matrix, b *matrix, v vector, m int) int64 {
 		if (d < 0) || (rand.Float64() < math.Exp(-float64(d)/temp)) ||
 				(fail == tries) {
 			c += d
-			w.swap(r, s)
+			w.Swap(r, s)
 			fail = 0
 		} else {
 			fail++
@@ -237,7 +179,7 @@ func solve(a *matrix, b *matrix, v vector, m int) int64 {
 		}
 		if c < cc {
 			cc = c
-			v.copy(w)
+			v.Copy(w)
 			tfound = temp
 			if verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
@@ -265,10 +207,10 @@ func main() {
 	}
 	n, a, b := load(in)
 	in.Close()
-	v := make(vector, n)
-	perm(v)
+	v := make(Vector, n)
+	Perm(v)
 	for i := 0; i < *k; i++ {
 		solve(a, b, v, *m)
 	}
-	v.print()
+	v.Print()
 }
