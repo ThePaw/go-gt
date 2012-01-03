@@ -1,8 +1,8 @@
-package matrix
+package gt
 
 import (
 	"fmt"
-	"rand"
+	"math/rand"
 )
 
 type Vector []int

@@ -1,0 +1,8 @@
+< ../../9bootstrap.mk
+
+TARG=gt
+GOFILES=\
+	matrix.go\
+	qap.go\
+
+< ../../mk.pkg

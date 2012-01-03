@@ -1,14 +1,13 @@
-package main
+// Solve the Quadratic Assignment Problem
+package gt
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"bufio"
 	"strconv"
-	"rand"
+	"math/rand"
 	"math"
-	.	"matrix"
 )
 
 var verbose bool
@@ -81,7 +80,7 @@ func readMatrix(rd *bufio.Reader, n int) *Matrix {
 	return M
 }
 
-func load(in *os.File) (int, *Matrix, *Matrix) {
+func Load(in *os.File) (int, *Matrix, *Matrix) {
 	rd := bufio.NewReader(in)
 	skip(rd)
 	line, _ := rd.ReadString('\n')
@@ -138,7 +137,8 @@ func inits(a *Matrix, b *Matrix, w Vector, c int64) (int64, int64, int64) {
 	return c, dmin, dmax
 }
 
-func solve(a *Matrix, b *Matrix, v Vector, m int) int64 {
+// Solve the Quadratic Assignment Problem using simulated annealing
+func QAP_SolveSA(a *Matrix, b *Matrix, v Vector, m int) int64 {
 	n := len(v)
 	w := make(Vector, n)
 	w.Copy(v)
@@ -189,28 +189,3 @@ func solve(a *Matrix, b *Matrix, v Vector, m int) int64 {
 	return cc
 }
 
-func main() {
-	k := flag.Int("k", 1, "Number of resolutions")
-	m := flag.Int("m", 1000, "Number of iterations")
-	ver := flag.Bool("v", false, "Verbose")
-	flag.Parse()
-	verbose = *ver
-	in := os.Stdin
-	if len(os.Args) > 1 {
-		file := flag.Arg(0)
-		var err os.Error
-		in, err = os.Open(file)
-		if in == nil {
-			fmt.Printf("can't open file %s: %s\n", file, err.String())
-			return
-		}
-	}
-	n, a, b := load(in)
-	in.Close()
-	v := make(Vector, n)
-	Perm(v)
-	for i := 0; i < *k; i++ {
-		solve(a, b, v, *m)
-	}
-	v.Print()
-}

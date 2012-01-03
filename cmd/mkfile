@@ -1,0 +1,7 @@
+< ../../9bootstrap.mk
+
+TARG=qap_sa
+GOFILES=\
+	sa.go\
+
+< ../../mk.cmd
