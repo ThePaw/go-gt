@@ -2,6 +2,6 @@
 
 TARG=qap_sa
 GOFILES=\
-	sa.go\
+	qap_sa.go\
 
 < ../../mk.cmd

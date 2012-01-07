@@ -16,14 +16,14 @@ func main() {
 	m := flag.Int("m", 1000, "Number of iterations")
 	ver := flag.Bool("v", false, "Verbose")
 	flag.Parse()
-	verbose = *ver
+	Verbose = *ver
 	in := os.Stdin
-	if len(os.Args) > 1 {
+	if flag.NArg() > 0 {
 		file := flag.Arg(0)
-		var err os.Error
+		var err error
 		in, err = os.Open(file)
 		if in == nil {
-			fmt.Printf("can't open file %s: %s\n", file, err.String())
+			fmt.Printf("can't open file %s: %s\n", file, err)
 			return
 		}
 	}

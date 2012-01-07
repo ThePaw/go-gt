@@ -10,7 +10,7 @@ import (
 	"math"
 )
 
-var verbose bool
+var Verbose bool
 
 func max(a int64, b int64) int64 {
 	if a > b {
@@ -28,7 +28,7 @@ func min(a int64, b int64) int64 {
 
 func skip(rd *bufio.Reader) {
 	var b byte = ' '
-	var err os.Error
+	var err error
 	for b == ' ' || b == '\t' || b == '\n' {
 		b, err = rd.ReadByte()
 		if err != nil {
@@ -47,8 +47,8 @@ func wskip(s string) string {
 	return ""
 }
 
-func end(s string) int {
-	for i := 0; i < len(s); i++ {
+func end(s string) (i int) {
+	for i = 0; i < len(s); i++ {
 		if s[i] == ' ' || s[i] == '\t' || s[i] == '\n'{
 			return i
 		}
@@ -72,7 +72,7 @@ func readMatrix(rd *bufio.Reader, n int) *Matrix {
 			x, p := readInt(line)
 			M.Set(j, i, x)
 			if p == 0 {
-				panic("bad int64eger")
+				panic("bad integer")
 			}
 			line = line[p:]
 		}
@@ -181,7 +181,7 @@ func QAP_SolveSA(a *Matrix, b *Matrix, v Vector, m int) int64 {
 			cc = c
 			v.Copy(w)
 			tfound = temp
-			if verbose {
+			if Verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
 			}
 		}
