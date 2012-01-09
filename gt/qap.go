@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"bufio"
-	"strconv"
 	"math/rand"
 	"math"
 )
@@ -24,60 +23,6 @@ func min(a int64, b int64) int64 {
 		return b
 	}
 	return a
-}
-
-func skip(rd *bufio.Reader) {
-	var b byte = ' '
-	var err error
-	for b == ' ' || b == '\t' || b == '\n' {
-		b, err = rd.ReadByte()
-		if err != nil {
-			return
-		}
-	}
-	rd.UnreadByte()
-}
-
-func wskip(s string) string {
-	for i := 0; i < len(s); i++ {
-		if s[i] != ' ' && s[i] != '\t' {
-			return s[i:]
-		}
-	}
-	return ""
-}
-
-func end(s string) (i int) {
-	for i = 0; i < len(s); i++ {
-		if s[i] == ' ' || s[i] == '\t' || s[i] == '\n'{
-			return i
-		}
-	}
-	return 0
-}
-
-func readInt(s string) (x int, i int){
-	i = end(s)
-	x, _ = strconv.Atoi(s[:i])
-	return x, i
-}
-
-func readMatrix(rd *bufio.Reader, n int) *Matrix {
-	M := NewMatrix(n)
-	for i := 0; i < n; i++ {
-		skip(rd)
-		line, _ := rd.ReadString('\n')
-		for j := 0; j < n; j++ {
-			line = wskip(line)
-			x, p := readInt(line)
-			M.Set(j, i, x)
-			if p == 0 {
-				panic("bad integer")
-			}
-			line = line[p:]
-		}
-	}
-	return M
 }
 
 func Load(in *os.File) (int, *Matrix, *Matrix) {
