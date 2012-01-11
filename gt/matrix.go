@@ -7,31 +7,35 @@ import (
 	"strconv"
 )
 
-type Vector []int
+type Vector []int64
 type Matrix struct {
-	n int
-	v []int
+	N int64
+	A []int64
 }
 
-func NewMatrix(n int) (m *Matrix) {
+func NewMatrix(n int64) (m *Matrix) {
 	m = new(Matrix)
-	m.n = n
-	m.v = make([]int, n*n)
+	m.N = n
+	m.A = make([]int64, n*n)
 	return m
 }
 
-func (m Matrix) Get(i int, j int) int {
-	return m.v[i+j*m.n]
+func (m Matrix) Get(i int64, j int64) int64 {
+	return m.A[i+j*m.N]
 }
 
-func (m Matrix) Set(i int, j int, v int) {
-	m.v[i+j*m.n] = v
+func (m Matrix) Set(i int64, j int64, v int64) {
+	m.A[i+j*m.N] = v
 }
 
-func (p Vector) Swap(i int, j int) {
+func (p Vector) Swap(i int64, j int64) {
 	x := p[i]
 	p[i] = p[j]
 	p[j] = x
+}
+
+func (v Vector) Len() int64 {
+	return int64(len(v))
 }
 
 func (v Vector) Copy(w Vector) {
@@ -48,8 +52,9 @@ func (v Vector) Print() {
 }
 
 func (m *Matrix) Print() {
-	for i := 0; i < m.n; i++ {
-		for j := 0; j < m.n; j++ {
+	var i, j int64
+	for i = 0; i < m.N; i++ {
+		for j = 0; j < m.N; j++ {
 			fmt.Printf("%d ", m.Get(i, j))
 		}
 		fmt.Print("\n")
@@ -57,12 +62,13 @@ func (m *Matrix) Print() {
 }
 
 func Perm(p Vector) {
-	n := len(p)
-	for i := 0; i < n; i++ {
-		p[i] = i
+	n := int64(len(p))
+	var i int64
+	for i = 0; i < n; i++ {
+		p[i] = int64(i)
 	}
-	for i := 0; i < n; i++ {
-		p.Swap(i, i+rand.Intn(n-i))
+	for i = 0; i < n; i++ {
+		p.Swap(i, i+rand.Int63n(n-i))
 	}
 }
 
@@ -87,8 +93,8 @@ func wskip(s string) string {
 	return ""
 }
 
-func end(s string) (i int) {
-	for i = 0; i < len(s); i++ {
+func end(s string) (i int64) {
+	for i = 0; i < int64(len(s)); i++ {
 		if s[i] == ' ' || s[i] == '\t' || s[i] == '\n'{
 			return i
 		}
@@ -96,23 +102,24 @@ func end(s string) (i int) {
 	return 0
 }
 
-func readInt(s string) (x int, i int){
-	i = end(s)
-	x, _ = strconv.Atoi(s[:i])
-	return x, i
+func readUint(s string) (int64, int64){
+	i := end(s)
+	x, _ := strconv.ParseInt(s[:i], 10, 64)
+	return int64(x), i
 }
 
-func readMatrix(rd *bufio.Reader, n int) *Matrix {
+func readMatrix(rd *bufio.Reader, n int64) *Matrix {
 	M := NewMatrix(n)
-	for i := 0; i < n; i++ {
+	var i, j int64
+	for i = 0; i < n; i++ {
 		skip(rd)
 		line, _ := rd.ReadString('\n')
-		for j := 0; j < n; j++ {
+		for j = 0; j < n; j++ {
 			line = wskip(line)
-			x, p := readInt(line)
+			x, p := readUint(line)
 			M.Set(j, i, x)
 			if p == 0 {
-				panic("bad integer")
+				panic("bad int")
 			}
 			line = line[p:]
 		}

@@ -1,10 +1,7 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=gt
+TARG=gt/dijkstra
 GOFILES=\
-	matrix.go\
-	qap.go\
-	transitiveclosure.go\
 	dijkstra.go\
 
 
