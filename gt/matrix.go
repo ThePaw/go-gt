@@ -1,9 +1,9 @@
 package gt
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
-	"bufio"
 	"strconv"
 )
 
@@ -21,11 +21,11 @@ func NewMatrix(n int64) (m *Matrix) {
 }
 
 func (m Matrix) Get(i int64, j int64) int64 {
-	return m.A[i+j*m.N]
+	return m.A[i*m.N+j]
 }
 
 func (m Matrix) Set(i int64, j int64, v int64) {
-	m.A[i+j*m.N] = v
+	m.A[i*m.N+j] = v
 }
 
 func (p Vector) Swap(i int64, j int64) {
@@ -95,14 +95,14 @@ func wskip(s string) string {
 
 func end(s string) (i int64) {
 	for i = 0; i < int64(len(s)); i++ {
-		if s[i] == ' ' || s[i] == '\t' || s[i] == '\n'{
+		if s[i] == ' ' || s[i] == '\t' || s[i] == '\n' {
 			return i
 		}
 	}
 	return 0
 }
 
-func readUint(s string) (int64, int64){
+func readUint(s string) (int64, int64) {
 	i := end(s)
 	x, _ := strconv.ParseInt(s[:i], 10, 64)
 	return int64(x), i

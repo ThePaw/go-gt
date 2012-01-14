@@ -41,10 +41,10 @@ func (h heap) swap(a, b int64) {
 
 func (h heap) up(j int64) {
 	for {
-		i := (j - 1)/2
-		if i == j || h.less(i, j){                        
+		i := (j - 1) / 2
+		if i == j || h.less(i, j) {
 			break
-		}       
+		}
 		h.swap(i, j)
 		j = i
 	}
@@ -52,12 +52,12 @@ func (h heap) up(j int64) {
 
 func (h heap) down(i int64) {
 	for {
-		left := 2*i+1
+		left := 2*i + 1
 		if left >= h.n {
 			break
 		}
 		j := left
-		if right := left+1; right < h.n && !h.less(left, right) {
+		if right := left + 1; right < h.n && !h.less(left, right) {
 			j = right
 		}
 		if h.less(i, j) {
@@ -80,8 +80,8 @@ func (h heap) update(p []int64, i int64, G *gt.Matrix) {
 	var j int64
 	for j = 0; j < G.N; j++ {
 		if G.Get(i, j) > 0 {
-			if h.w[i] + G.Get(i, j) < h.w[j] {
-				p[j] = i+1
+			if h.w[i]+G.Get(i, j) < h.w[j] {
+				p[j] = i + 1
 				h.w[j] = h.w[i] + G.Get(i, j)
 				h.up(h.a[j])
 			}
@@ -93,13 +93,13 @@ func Dijkstra(G *gt.Matrix, i int64) (p []int64) {
 	p = make([]int64, G.N)
 	h := new(G.N)
 	h.w[i] = 0
-	h.up(i)
+	h.swap(i, 0)
 	for h.n > 0 {
 		i = h.pop()
 		if h.w[i] == math.MaxInt64 {
-			return h.w
+			return p
 		}
 		h.update(p, i, G)
 	}
-	return h.w
+	return p
 }

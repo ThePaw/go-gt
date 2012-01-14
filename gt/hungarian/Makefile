@@ -1,9 +1,8 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=gt
+TARG=gt/hungarian
 GOFILES=\
-	matrix.go\
-	qap.go\
-	transitiveclosure.go\
+	hungarian.go\
+
 
 include $(GOROOT)/src/Make.pkg

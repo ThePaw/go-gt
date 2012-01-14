@@ -20,7 +20,7 @@ func TestClosure(t *testing.T) {
 		0, 0, 1, 0}
 	c := NewMatrix(4)
 	g.TransitiveClosure(c)
-	assert(g.Get(0,3) == 2)
+	assert(g.Get(0, 3) == 2)
 }
 
 func TestPath(t *testing.T) {
