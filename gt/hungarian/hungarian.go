@@ -183,8 +183,8 @@ func inits(g *gt.Matrix) (e *env) {
 	return e
 }
 
-func Hungarian(g *gt.Matrix) []int64 {
+func Hungarian(g *gt.Matrix) (xy, yx []int64) {
 	e := inits(g)
 	e.augment()
-	return e.xy
+	return e.xy, e.yx
 }

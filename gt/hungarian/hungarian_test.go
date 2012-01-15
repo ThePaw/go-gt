@@ -3,7 +3,6 @@ package hungarian
 import (
 	"gt"
 	"testing"
-	"fmt"
 )
 
 func assert(t bool) {
@@ -20,7 +19,6 @@ func TestHungarian(t *testing.T) {
 		1, 9, 1, 9,
 		9, 1, 9, 1,
 		9, 9, 1, 9}
-	p := Hungarian(g)
-	fmt.Print(p)
+	p, _ := Hungarian(g)
 	assert(p[0] == 0)
 }
