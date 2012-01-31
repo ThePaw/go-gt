@@ -3,8 +3,7 @@
 package hungarian
 
 import (
-	//"fmt"
-	"gt"
+	"go-gt.googlecode.com/hg/gt"
 	"math"
 )
 

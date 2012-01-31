@@ -6,7 +6,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	.	"gt"
+	. "go-gt.googlecode.com/hg/gt"
+
 )
 
 var verbose bool
