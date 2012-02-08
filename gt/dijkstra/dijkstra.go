@@ -3,7 +3,7 @@
 package dijkstra
 
 import (
-	"go-gt.googlecode.com/hg/gt"
+	"code.google.com/p/go-gt/gt"
 	"math"
 )
 
