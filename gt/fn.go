@@ -17,4 +17,3 @@ func max(a, b int64) int64 {
 	}
 	return b
 }
-

@@ -41,16 +41,16 @@ func cost(a *Matrix, b *Matrix, p Vector) (c int64) {
 
 func delta(a *Matrix, b *Matrix, p Vector, r int64, s int64) (d int64) {
 	var i int64
-	d = int64((a.Get(r, r) - a.Get(s, s)) * (b.Get(p[s], p[s]) - b.Get(p[r], p[r]) +
-		(a.Get(r, s)-a.Get(s, r))*(b.Get(p[s], p[r])-b.Get(p[r], p[s]))))
+
+
+
+	d = int64((a.Get(r, r) - a.Get(s, s)) * (b.Get(p[s], p[s]) - b.Get(p[r], p[r]) + 	(a.Get(r, s)-a.Get(s, r))*(b.Get(p[s], p[r])-b.Get(p[r], p[s]))))
 	for i = 0; i < p.Len(); i++ {
 		if i != r && i != s {
-			d += (a.Get(i, r) - a.Get(i, s)) * (b.Get(p[i], p[s]) - b.Get(p[i], p[r]) +
-				(a.Get(r, i)-a.Get(s, i))*(b.Get(p[s], p[i])-b.Get(p[r], p[i])))
+			d += (a.Get(i, r) - a.Get(i, s)) * (b.Get(p[i], p[s]) - b.Get(p[i], p[r])) +	(a.Get(r, i)-a.Get(s, i))*(b.Get(p[s], p[i])-b.Get(p[r], p[i]))
 		}
 	}
 	return d
-
 }
 
 func initQAP(a *Matrix, b *Matrix, w Vector, c int64) (int64, int64, int64) {
@@ -73,12 +73,13 @@ func initQAP(a *Matrix, b *Matrix, w Vector, c int64) (int64, int64, int64) {
 	return c, dmin, dmax
 }
 
-// Solve the Quadratic Assignment Problem using simulated annealing
-func QAP_SolveSA(a *Matrix, b *Matrix, v Vector, m int) int64 {
-	n := v.Len()
+// Solve the Quadratic Assignment Problem using Simulated Annealing. 
+func QAP_SolveSA(a *Matrix, b *Matrix, p , best_p Vector, m int) int64 {
+	var j int64
+	n := p.Len()
 	w := make(Vector, n)
-	w.Copy(v)
-	cc := cost(a, b, v)
+	w.Copy(p)
+	cc := cost(a, b, p)
 	c, dmin, dmax := initQAP(a, b, w, cc)
 	var t0 float64 = float64(dmin + (dmax-dmin)/10.0)
 	tf := float64(dmin)
@@ -101,8 +102,7 @@ func QAP_SolveSA(a *Matrix, b *Matrix, v Vector, m int) int64 {
 			s = r + 1
 		}
 		d := delta(a, b, w, r, s)
-		if (d < 0) || (rand.Float64() < math.Exp(-float64(d)/temp)) ||
-			(fail == tries) {
+		if (d < 0) || (rand.Float64() < math.Exp(-float64(d)/temp)) ||	(fail == tries) {
 			c += d
 			w.Swap(r, s)
 			fail = 0
@@ -115,10 +115,14 @@ func QAP_SolveSA(a *Matrix, b *Matrix, v Vector, m int) int64 {
 		}
 		if c < cc {
 			cc = c
-			v.Copy(w)
+			p.Copy(w)
 			tfound = temp
 			if Verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
+				p.Print()
+			}
+			for j = 0; j < n; j = j + 1 {
+				best_p[j] = p[j]
 			}
 		}
 	}

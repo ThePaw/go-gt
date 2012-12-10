@@ -62,6 +62,7 @@ func (m *Matrix) Print() {
 	}
 }
 
+// generate a random permutation p
 func Perm(p Vector) {
 	n := int64(len(p))
 	var i int64

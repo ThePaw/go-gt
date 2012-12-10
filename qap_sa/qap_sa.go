@@ -1,6 +1,6 @@
 // Copyright 2012 The Gt Authors. All rights reserved. See the LICENSE file.
 
-// Solves the Quadratic Assignment problem using simulated annealing. 
+// Solves the Quadratic Assignment problem using Simulated Annealing. 
 package main
 
 import (
@@ -30,10 +30,14 @@ func main() {
 	}
 	n, a, b := Load(in)
 	in.Close()
+
 	v := make(Vector, n)
 	Perm(v)
+	best_p := make(Vector, n)
 	for i := 0; i < *k; i++ {
-		QAP_SolveSA(a, b, v, *m)
+		QAP_SolveSA(a, b, v, best_p, *m)
 	}
-	v.Print()
+	if !Verbose {
+		best_p.Print()
+	}
 }
