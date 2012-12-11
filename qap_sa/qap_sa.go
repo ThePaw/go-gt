@@ -10,14 +10,14 @@ import (
 	. "code.google.com/p/go-gt/gt"
 )
 
-var verbose bool
+var Verbose bool
 
 func main() {
 	k := flag.Int("k", 1, "Number of resolutions")
 	m := flag.Int("m", 1000, "Number of iterations")
-	ver := flag.Bool("v", false, "Verbose")
+	verbose := flag.Bool("v", false, "Verbose")
 	flag.Parse()
-	Verbose = *ver
+	iter := int64(*m)
 	in := os.Stdin
 	if flag.NArg() > 0 {
 		file := flag.Arg(0)
@@ -31,13 +31,15 @@ func main() {
 	n, a, b := Load(in)
 	in.Close()
 
-	v := make(Vector, n)
-	Perm(v)
+	p := make(Vector, n)
 	best_p := make(Vector, n)
+	Perm(p)
+	best_p.Copy(p)
 	for i := 0; i < *k; i++ {
-		QAP_SolveSA(a, b, v, best_p, *m)
+		Perm(p)
+		QAP_SolveSA(a, b, p, best_p, iter, *verbose)
 	}
-	if !Verbose {
+	if ! *verbose {
 		best_p.Print()
 	}
 }

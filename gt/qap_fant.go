@@ -7,16 +7,7 @@ package gt
 
 import (
 	"fmt"
-	"math"
-	"math/rand"
 )
-
-const infinite  int64 = math.MaxInt64
-
-// Uniform random number. 
-func unif(low, high int64) int64 {
-	return low + int64(float64(high-low+1)*rand.Float64())
-}
 
 // Local search: Scan the neighbourhood at most twice. 
 // Perform improvements as soon as they are found. 
@@ -111,15 +102,13 @@ func generate_solution_trace(n int64, p Vector, trace *Matrix) {
 }
 
 // Solve the Quadratic Assignment Problem using Fast Ant System. 
-func QAP_SolveFANT(a *Matrix, b *Matrix, p , best_p Vector, rr, mm int) int64 {
-	var increment, i, k, r, m, cc int64
-	m = int64(mm)
-	r = int64(rr)
+func QAP_SolveFANT(a *Matrix, b *Matrix, p, best_p Vector, r, m int64, verbose bool) int64 {
+	var increment, i, k, cc int64
 	n := p.Len()
 	trace := NewMatrix(n)
 	increment = 1
 	init_trace(n, increment, trace)
-	best_cost := infinite
+	best_cost := Inf
 
 	// FANT iterations
 	for i = 0; i < m; i++ {
@@ -131,14 +120,13 @@ func QAP_SolveFANT(a *Matrix, b *Matrix, p , best_p Vector, rr, mm int) int64 {
 		// Best solution improved ?
 		if cc < best_cost {
 			best_cost = cc
-			if Verbose {
+			if verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
 				p.Print()
 			}
 			for k = 0; k < n; k = k + 1 {
 				best_p[k] = p[k]
 			}
-			//      print(n, p);
 			increment = 1
 			init_trace(n, increment, trace)
 		} else {
