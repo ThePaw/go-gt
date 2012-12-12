@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	cost = gt.Inf
-	k := flag.Int("k", 1, "Number of resolutions")
+	var cost = Inf
+	k := flag.Int("k", 3, "Number of resolutions")
 	m := flag.Int("m", 1000, "Number of iterations")
 	rr := flag.Int("r", 5, "R-parameter")
 	verbose := flag.Bool("v", false, "Verbose")
@@ -42,7 +42,9 @@ func main() {
 			best_sol.Copy(p)
 		}
 	}
-	if !*verbose {
-		best_sol.Print()
+	if *verbose {
+		fmt.Println("==============================")
+		fmt.Println("best cost: ", cost)
 	}
+	best_sol.Print()
 }

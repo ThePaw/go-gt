@@ -2,7 +2,7 @@
 
 package gt
 
-// Solves the Quadratic Assignment Problem using the Robust taboo search.
+// Solves the Quadratic Assignment Problem using the Robust Taboo Search. 
 // E. D. Taillard 1991. Robust taboo search for the quadratic assignment problem. Parallel Computing 17, 1991: 443-455.
 
 import (
@@ -10,16 +10,7 @@ import (
 	"math/rand"
 )
 
-// Cost difference if elements i and j  are swapped in permutation (solution) p, 
-// but the value of dist[i][j] is supposed to
-// be known before the transposition of elements r and s. 
-func delta_part(a, b, dist *Matrix, p Vector, i, j, r, s int64) int64 {
-	return (dist.Get(i, j) + (a.Get(r, i)-a.Get(r, j)+a.Get(s, j)-a.Get(s, i))*
-		(b.Get(p[s], p[i])-b.Get(p[s], p[j])+b.Get(p[r], p[j])-b.Get(p[r], p[i])) +
-		(a.Get(i, r)-a.Get(j, r)+a.Get(j, s)-a.Get(i, s))*
-			(b.Get(p[i], p[s])-b.Get(p[j], p[s])+b.Get(p[j], p[r])-b.Get(p[i], p[r])))
-}
-
+// QAP_SolveTS solves the Quadratic Assignment Problem using the Robust Taboo Search. 
 func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iterations int64, verbose bool) int64 {
 	var i, j, current_cost, iter int64
 	best_cost := Inf
@@ -80,7 +71,7 @@ func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iter
 		}
 
 		if i_retained == Inf {
-			fmt.Println("All moves are tabu!")	// to be improved
+			fmt.Println("All moves are tabu!") // to be improved
 		} else { // transpose elements in pos. i_retained and j_retained
 
 			p.Swap(i_retained, j_retained)
@@ -97,10 +88,10 @@ func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iter
 			if current_cost < best_cost {
 				best_cost = current_cost
 				best_sol.Copy(p)
-			if verbose {
-				fmt.Printf("iteration %d: cost=%d\n", iter, best_cost)
-				best_sol.Print()
-			}
+				if verbose {
+					fmt.Printf("iteration %d: cost=%d\n", iter, best_cost)
+					best_sol.Print()
+				}
 			}
 
 			// update matrix of the move costs

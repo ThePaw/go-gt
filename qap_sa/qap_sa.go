@@ -4,16 +4,15 @@
 package main
 
 import (
+	. "code.google.com/p/go-gt/gt"
 	"flag"
 	"fmt"
 	"os"
-	. "code.google.com/p/go-gt/gt"
 )
 
-var Verbose bool
-
 func main() {
-	k := flag.Int("k", 1, "Number of resolutions")
+	var cost int64 = Inf
+	k := flag.Int("k", 1000, "Number of resolutions")
 	m := flag.Int("m", 1000, "Number of iterations")
 	verbose := flag.Bool("v", false, "Verbose")
 	flag.Parse()
@@ -32,14 +31,18 @@ func main() {
 	in.Close()
 
 	p := make(Vector, n)
-	best_p := make(Vector, n)
-	Perm(p)
-	best_p.Copy(p)
+	best_sol := make(Vector, n)
 	for i := 0; i < *k; i++ {
 		Perm(p)
-		QAP_SolveSA(a, b, p, best_p, iter, *verbose)
+		cc := QAP_SolveSA(a, b, p, iter, *verbose)
+		if cc < cost {
+			cost = cc
+			best_sol.Copy(p)
+		}
 	}
-	if ! *verbose {
-		best_p.Print()
+	if *verbose {
+		fmt.Println("==============================")
+		fmt.Println("best cost: ", cost)
 	}
+	best_sol.Print()
 }

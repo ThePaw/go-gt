@@ -15,9 +15,9 @@ func main() {
 	var (
 		tabu_duration, aspiration, cost int64
 	)
-	cost = 999999999
-	k := flag.Int("k", 2, "Number of resolutions")
-	m := flag.Int("m", 10000, "Number of iterations")
+	cost = Inf
+	k := flag.Int("k", 3, "Number of resolutions")
+	m := flag.Int("m", 1000, "Number of iterations")
 	o := flag.Int("o", 0, "Opt-parameter")
 	verbose := flag.Bool("v", false, "Verbose")
 	flag.Parse()
@@ -44,13 +44,13 @@ func main() {
 		Perm(p)
 		cc := QAP_SolveTS(a, b, p, opt, tabu_duration, aspiration, iter, *verbose)
 		if cc < cost {
-
 			cost = cc
 			best_sol.Copy(p)
-
 		}
 	}
-	if !*verbose {
-		best_sol.Print()
+	if *verbose {
+		fmt.Println("==============================")
+		fmt.Println("best cost: ", cost)
 	}
+	best_sol.Print()
 }

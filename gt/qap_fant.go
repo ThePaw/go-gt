@@ -11,25 +11,25 @@ import (
 
 // Local search: Scan the neighbourhood at most twice. 
 // Perform improvements as soon as they are found. 
-func local_search(a *Matrix, b *Matrix, p Vector, cost *int64) {
+func localSearch(a *Matrix, b *Matrix, p Vector, cost *int64) {
 	// set of moves, numbered from 0 to index
-	var i, j, nr_moves int64
+	var i, j, nMov int64
 	n := p.Len()
 	move := make(Vector, n*(n-1)/2)
-	nr_moves = 0
+	nMov = 0
 	for i = 0; i < n-1; i++ {
 		for j = i + 1; j < n; j++ {
-			move[nr_moves] = n*i + j
-			nr_moves++
+			move[nMov] = n*i + j
+			nMov++
 		}
 	}
 	improved := true
-	for scan_nr := 0; scan_nr < 2 && improved; scan_nr++ {
+	for k := 0; k < 2 && improved; k++ {
 		improved = false
-		for i = 0; i < nr_moves-1; i++ {
-			move.Swap(i, unif(i+1, nr_moves-1))
+		for i = 0; i < nMov-1; i++ {
+			move.Swap(i, unif(i+1, nMov-1))
 		}
-		for i = 0; i < nr_moves; i++ {
+		for i = 0; i < nMov; i++ {
 			r := move[i] / n
 			s := move[i] % n
 			d := delta(a, b, p, r, s)
@@ -43,27 +43,27 @@ func local_search(a *Matrix, b *Matrix, p Vector, cost *int64) {
 	return
 }
 
-// (Re-) initialization of the memory. 
-func init_trace(n, increment int64, trace *Matrix) {
+// (Re-) initialization of the trace. 
+func initTrace(n, inc int64, trace *Matrix) {
 	var i, j int64
 	for i = 0; i < n; i++ {
 		for j = 0; j < n; j++ {
-			trace.Set(i, j, increment)
+			trace.Set(i, j, inc)
 		}
 	}
 }
 
-// Memory update. 
-func update_trace(n int64, p, best_p Vector, increment *int64, r int64, trace *Matrix) {
+// Trace update. 
+func updateTrace(n int64, p, best_p Vector, inc *int64, r int64, trace *Matrix) {
 	var i int64
-	for i = 0; i < n && p[i] == best_p[i]; i++ {
+	for i = 0; i < n && p[i] == best_p[i]; i++ {  // skip
 	}
 	if i == n {
-		(*increment)++
-		init_trace(n, *increment, trace)
+		(*inc)++
+		initTrace(n, *inc, trace)
 	} else {
 		for i = 0; i < n; i++ {
-			trace.Set(i, p[i], trace.Get(i, p[i])+*increment)
+			trace.Set(i, p[i], trace.Get(i, p[i])+*inc)
 			trace.Set(i, best_p[i], trace.Get(i, best_p[i])+r)
 		}
 	}
@@ -71,8 +71,9 @@ func update_trace(n int64, p, best_p Vector, increment *int64, r int64, trace *M
 
 // Generate a solution with probability of setting p[i] == j 
 // proportionnal to trace[i][j]. 
-func generate_solution_trace(n int64, p Vector, trace *Matrix) {
+func genTrace(p Vector, trace *Matrix) {
 	var i, j, k, target, sum int64
+	n := p.Len()
 	nexti := make(Vector, n)
 	nextj := make(Vector, n)
 	sum_trace := make(Vector, n)
@@ -101,37 +102,37 @@ func generate_solution_trace(n int64, p Vector, trace *Matrix) {
 	}
 }
 
-// Solve the Quadratic Assignment Problem using Fast Ant System. 
-func QAP_SolveFANT(a *Matrix, b *Matrix, p, best_p Vector, r, m int64, verbose bool) int64 {
-	var increment, i, k, cc int64
+// QAP_SolveFANT solves the Quadratic Assignment Problem using Fast Ant System. 
+func QAP_SolveFANT(a *Matrix, b *Matrix, p Vector, r, m int64, verbose bool) int64 {
+	var inc, i, c int64
 	n := p.Len()
+	w := make(Vector, n)
+	w.Copy(p)
 	trace := NewMatrix(n)
-	increment = 1
-	init_trace(n, increment, trace)
-	best_cost := Inf
+	inc = 1
+	initTrace(n, inc, trace)
+	cc := Inf
 
 	// FANT iterations
 	for i = 0; i < m; i++ {
 		// Build a new solution
-		generate_solution_trace(n, p, trace)
-		cc = cost(a, b, p)
+		genTrace(w, trace)
+		c = cost(a, b, w)
 		// Improve solution with a local search
-		local_search(a, b, p, &cc)
+		localSearch(a, b, w, &c)
 		// Best solution improved ?
-		if cc < best_cost {
-			best_cost = cc
+		if c < cc {
+			cc = c
+			p.Copy(w)
 			if verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
 				p.Print()
 			}
-			for k = 0; k < n; k = k + 1 {
-				best_p[k] = p[k]
-			}
-			increment = 1
-			init_trace(n, increment, trace)
+			inc = 1
+			initTrace(n, inc, trace)
 		} else {
 			// Memory update
-			update_trace(n, p, best_p, &increment, r, trace)
+			updateTrace(n, w, p, &inc, r, trace)
 		}
 	}
 	return cc
