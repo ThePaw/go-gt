@@ -9,6 +9,9 @@ import (
 	"math/rand"
 )
 
+var Verbose bool
+
+
 const Inf int64 = math.MaxInt64
 
 func min(a, b int64) int64 {

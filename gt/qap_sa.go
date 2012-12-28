@@ -34,7 +34,7 @@ func initQAP(a *Matrix, b *Matrix, w Vector, c int64) (int64, int64, int64) {
 }
 
 // QAP_SolveSA solves the Quadratic Assignment Problem using Simulated Annealing. 
-func QAP_SolveSA(a *Matrix, b *Matrix, p Vector, m int64, verbose bool) int64 {
+func QAP_SolveSA(a *Matrix, b *Matrix, p Vector, m int64) int64 {
 	var i int64
 	n := p.Len()
 	w := make(Vector, n)
@@ -80,7 +80,7 @@ func QAP_SolveSA(a *Matrix, b *Matrix, p Vector, m int64, verbose bool) int64 {
 			cc = c
 			p.Copy(w)
 			tfound = temp
-			if verbose {
+			if Verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
 				p.Print()
 			}

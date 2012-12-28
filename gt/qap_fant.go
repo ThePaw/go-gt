@@ -103,7 +103,7 @@ func genTrace(p Vector, trace *Matrix) {
 }
 
 // QAP_SolveFANT solves the Quadratic Assignment Problem using Fast Ant System. 
-func QAP_SolveFANT(a *Matrix, b *Matrix, p Vector, r, m int64, verbose bool) int64 {
+func QAP_SolveFANT(a *Matrix, b *Matrix, p Vector, r, m int64) int64 {
 	var inc, i, c int64
 	n := p.Len()
 	w := make(Vector, n)
@@ -124,7 +124,7 @@ func QAP_SolveFANT(a *Matrix, b *Matrix, p Vector, r, m int64, verbose bool) int
 		if c < cc {
 			cc = c
 			p.Copy(w)
-			if verbose {
+			if Verbose {
 				fmt.Printf("iteration %d: cost=%d\n", i, cc)
 				p.Print()
 			}

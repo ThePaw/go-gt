@@ -11,7 +11,7 @@ import (
 )
 
 // QAP_SolveTS solves the Quadratic Assignment Problem using the Robust Taboo Search. 
-func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iterations int64, verbose bool) int64 {
+func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iterations int64) int64 {
 	var i, j, current_cost, iter int64
 	best_cost := Inf
 	n := p.Len()
@@ -88,7 +88,7 @@ func QAP_SolveTS(a, b *Matrix, p Vector, opt, tabu_duration, aspiration, nr_iter
 			if current_cost < best_cost {
 				best_cost = current_cost
 				best_sol.Copy(p)
-				if verbose {
+				if Verbose {
 					fmt.Printf("iteration %d: cost=%d\n", iter, best_cost)
 					best_sol.Print()
 				}

@@ -15,8 +15,9 @@ func main() {
 	k := flag.Int("k", 3, "Number of resolutions")
 	m := flag.Int("m", 1000, "Number of iterations")
 	rr := flag.Int("r", 5, "R-parameter")
-	verbose := flag.Bool("v", false, "Verbose")
+	verb := flag.Bool("v", false, "Verbose")
 	flag.Parse()
+	Verbose = *verb
 	r := int64(*rr)
 	iter := int64(*m)
 	in := os.Stdin
@@ -36,13 +37,13 @@ func main() {
 	best_sol := make(Vector, n)
 	for i := 0; i < *k; i++ {
 		Perm(p)
-		cc := QAP_SolveFANT(a, b, p, r, iter, *verbose)
+		cc := QAP_SolveFANT(a, b, p, r, iter)
 		if cc < cost {
 			cost = cc
 			best_sol.Copy(p)
 		}
 	}
-	if *verbose {
+	if Verbose {
 		fmt.Println("==============================")
 		fmt.Println("best cost: ", cost)
 	}

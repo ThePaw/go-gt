@@ -6,7 +6,7 @@ import (
 	"container/list"
 )
 
-// TransitiveClosure of a given graph G connects vertices u and v iff there is a path in G from u to v. Thus the transitive closure of any connected graph is complete. 
+// TransitiveClosure of a given graph G connects vertices u and v iff there is a path in G from u to v. Thus the transitive closure of any connected graph is complete.
 func (G *Matrix) TransitiveClosure(N *Matrix) {
 	var i, j, k int64
 	for i = 0; i < G.N; i++ {
