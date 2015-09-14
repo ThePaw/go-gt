@@ -1,0 +1,2 @@
+Graph theory algorithms written in "Go" language:
+Quadratic Assignment Problem. Dijkstra's Algorithm for the shortest path. Hungarian algorithm to solve the assigment problem. Floyd-Warshall algorithm for shortest path or transitive closure.
